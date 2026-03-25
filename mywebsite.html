@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<title>Portfolio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Nova+Square&display=swap" rel="stylesheet">
+
+<style>
+.icon-bubble {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+.icon-bubble:hover {
+    transform: translateY(-6px) scale(1.2);
+}
+* {
+    font-family: 'Nova Square', sans-serif;
+}
+.car-card { background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 1rem; margin: 1rem auto; cursor: pointer; overflow: visible; transition: all 0.3s ease; max-width: 400px; text-align: center; }
+.car-img { max-height: 0; overflow: hidden; transition: max-height 0.6s ease; }
+.car-img img { width: 100%; border-radius: 8px; margin-top: 12px; object-fit: cover; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.car-card.open .car-img { max-height: 1000px; overflow: visible; }
+.car-card.open .car-img img { transform: scale(2.2) translateY(10px); }
+.hint { font-size: 11px; color: #888; margin-top: 6px; }
+
+.skill-pill {
+    background: rgba(255,255,255,0.06);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    color: #ccc;
+    cursor: default;
+    transition: transform 0.3s ease;
+}
+.skill-pill:hover {
+    transform: translateY(-6px);
+}
+.timeline { position: relative; padding-left: 0; }
+.timeline::before { content: ''; position: absolute; left: 22px; top: 48px; bottom: 48px; width: 1px; background: rgba(255,255,255,0.2); z-index: 0; }
+.timeline-item { position: relative; display: flex; gap: 1rem; margin-bottom: 2rem; align-items: flex-start; z-index: 1; }
+.timeline-icon { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 0.5px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; margin-top: 4px; cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, border 0.3s ease; }
+.timeline-icon:hover { transform: scale(1.3) rotate(15deg); background: rgba(55,42,172,0.4); border: 0.5px solid rgba(123,110,246,0.6); }
+.timeline-right { flex: 1; border-bottom: 0.5px solid rgba(255,255,255,0.08); padding-bottom: 1.5rem; }
+.timeline-date { font-size: 0.75rem; color: #7b6ef6; margin-bottom: 4px; }
+.timeline-title { font-size: 0.95rem; font-weight: 500; color: white; margin: 0 0 4px; }
+.timeline-desc { font-size: 0.8rem; color: #aaa; line-height: 1.6; margin: 0; }
+.dock {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(20,20,40,0.85);
+    border: 0.5px solid rgba(255,255,255,0.15);
+    border-radius: 999px;
+    padding: 10px 16px;
+    backdrop-filter: blur(16px);
+    z-index: 200;
+}
+.dock-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: #aaa;
+    transition: color 0.2s, transform 0.2s;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: none;
+    border: none;
+    position: relative;
+}
+.dock-btn:hover {
+    color: white;
+    transform: translateY(-4px);
+}
+.dock-btn::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.1);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    color: white;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+}
+.dock-btn:hover::before {
+    opacity: 1;
+}
+.dock-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255,255,255,0.15);
+    margin: 0 4px;
+}
+.project-card {
+    background: rgba(255,255,255,0.04);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: transform 0.3s ease, border 0.3s ease;
+}
+.project-card:hover {
+    transform: translateY(-4px);
+    border: 0.5px solid rgba(123,110,246,0.5);
+}
+.project-tag {
+    font-size: 0.7rem;
+    color: #7b6ef6;
+    margin: 0 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.project-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: white;
+    margin: 0 0 6px;
+}
+.project-desc {
+    font-size: 0.8rem;
+    color: #aaa;
+    line-height: 1.6;
+    margin: 0 0 1rem;
+}
+.project-link {
+    font-size: 0.8rem;
+    color: #7b6ef6;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.project-link:hover { color: white; }
+
+body.light-mode { background: #f8f8f8 !important; color: #111 !important; }
+body.light-mode p { color: #111; }
+body.light-mode h1, body.light-mode h2, body.light-mode h3 { color: #111; }
+body.light-mode nav { background: rgba(248,248,248,0.9); }
+body.light-mode .dock { background: rgba(255,255,255,0.9); border: 0.5px solid rgba(0,0,0,0.1); }
+body.light-mode .dock-btn { color: #333; }
+body.light-mode .dock-btn:hover { color: #000; }
+body.light-mode .dock-divider { background: rgba(0,0,0,0.15); }
+body.light-mode .car-card { background: rgba(0,0,0,0.04); border: 0.5px solid rgba(0,0,0,0.1); }
+body.light-mode .skill-pill { background: rgba(0,0,0,0.05); border: 0.5px solid rgba(0,0,0,0.15); color: #111; }
+body.light-mode .project-card { background: rgba(0,0,0,0.04); border: 0.5px solid rgba(0,0,0,0.1); }
+body.light-mode .timeline-right { border-bottom: 0.5px solid rgba(0,0,0,0.08); }
+body.light-mode .timeline::before { background: rgba(0,0,0,0.2); }
+body.light-mode .timeline-icon { background: rgba(0,0,0,0.05); border: 0.5px solid rgba(0,0,0,0.12); }
+body.light-mode .timeline-date { color: #444; }
+body.light-mode .timeline-title { color: #111; }
+body.light-mode .timeline-desc { color: #444; }
+body.light-mode .project-tag { color: #444; }
+body.light-mode .project-link { color: #111; }
+body.light-mode .hint { color: #666; }
+</style>
+
+</head>
+
+<body class="bg-[#0f1117] text-white">
+
+<section class="flex flex-col items-center text-sm relative overflow-hidden">
+
+<nav class="z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 backdrop-blur">
+
+    <div class="font-bold text-lg">
+        MICHAEL
+    </div>
+
+    <div class="hidden md:flex items-center gap-8">
+        <a href="#about" class="hover:text-slate-300">About</a>
+        <a href="#projects" class="hover:text-slate-300">projects</a>
+        <a href="#hobbies" class="hover:text-slate-300">hobbies</a>
+        <a href="#contact" class="hover:text-slate-300">Contact</a>
+    </div>
+
+</nav>
+
+<div class="flex flex-col items-center mt-24 px-4 text-center">
+
+   <h1 class="text-center text-5xl leading-[68px] md:text-6xl md:leading-[70px] mt-4 font-semibold max-w-2xl" id="main-heading">
+        <span id="typed-text"></span>
+        <span class="border-r-2 border-white animate-pulse"></span>
+    </h1>
+    <p class="mt-4 text-lg">
+        Electrical & Electronic Engineering Student
+    </p>
+
+    <p class="text-lg">
+        Aspiring Software & Embedded Systems Engineer
+    </p>
+<p id="funfact" style="font-style:italic;color:#aaa;margin-top:1.5rem;font-size:13px;transition:opacity 0.5s ease;"></p>
+
+</div>
+
+<style>
+    @keyframes bounce-slow {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-12px); }
+    }
+    .bounce-slow {
+        animation: bounce-slow 3s ease-in-out infinite;
+    }
+</style>
+
+<div class="flex justify-center mt-16">
+    <img src="me.jpeg"
+        alt="My photo"
+        class="w-96 h-96 rounded-xl object-cover shadow-2xl border-4 border-white bounce-slow">
+</div>
+
+<section id="about" class="mt-32 text-center px-6 max-w-2xl mx-auto">
+  <h2 class="text-3xl font-semibold">About Me</h2>
+  <p style="margin-top:1rem;font-size:15px;color:#ccc;line-height:1.7;">
+    Hi, I'm Michael an Electrical & Electronic Engineering student with a huge passion for tech... and cars. 
+    My love for programming began in the summer of 2025 and ever since, it's been a dream of mine to be a developer. 
+    I'm aspiring to be a Software or Embedded Systems Engineer, always pushing to get the most out of life and never settling for less than my best.
+    Oh, and a fun fact I have a huge passion for cars. My dream cars? The Porsche 911 GT3 RS or the Ferrari 296... 
+    but I think the Ferrari wins 😂
+  </p>
+
+  <p style="font-size:15px;color:#ccc;margin:1rem 0;">My dream cars? Tap to reveal</p>
+
+  <div class="car-card" onclick="this.classList.toggle('open'); this.querySelector('.hint').textContent = 'tap to see'">
+    <h3 style="font-size:16px;font-weight:500;margin:0 0 4px;">Ferrari 296</h3>
+    <p style="font-size:12px;color:#888;margin:0;">🥇</p>
+    <div class="car-img">
+      <img src="296.jpg" alt="Ferrari 296">
+    </div>
+    <p class="hint">tap to expand</p>
+  </div>
+
+  <div class="car-card" onclick="this.classList.toggle('open'); this.querySelector('.hint').textContent = 'tap to see'">
+    <h3 style="font-size:16px;font-weight:500;margin:0 0 4px;">Porsche 911 GT3 RS</h3>
+    <p style="font-size:12px;color:#888;margin:0;">🥈</p>
+    <div class="car-img">
+      <img src="gt3.jpg" alt="Porsche 911 GT3 RS">
+    </div>
+    <p class="hint">tap to expand</p>
+  </div>
+
+</section>
+<section id="skills" class="mt-20 text-center px-6">
+    <h2 class="text-3xl font-semibold">Skills</h2>
+    <div class="mt-6" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">
+        <div class="skill-pill">Python</div>
+        <div class="skill-pill">Verilog HDL</div>
+        <div class="skill-pill">Raspberry Pi Pico</div>
+        <div class="skill-pill">MATLAB</div>
+    </div>
+</section>
+<section id="projects" class="mt-20 text-center px-6" style="max-width:700px;margin-left:auto;margin-right:auto;">
+    <h2 class="text-3xl font-semibold">Projects</h2>
+    <p style="color:#aaa;font-size:0.85rem;margin:0.5rem 0 2rem;">Here's some of what I've been building 🛠️</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;text-align:left;">
+
+        <div class="project-card">
+            <p class="project-tag">Python</p>
+            <h3 class="project-title">Smart Heating System</h3>
+            <p class="project-desc">This project is a smart heating system which is controlled using a Raspberry Pico Pi W, featuring embedded and connectivity to enable intelligent control modes including weekend, night and Eco operation. This project taught me a lot as i faced a lot of errors during this one. its also my first time making use of a Raspberry Pi board so that was a really cool thing to learn i look forward to creating more things with a microcontroller!</p>
+            <a href="https://github.com/17MikeAsh/SMART-HEATING-SYSTEM-.git" target="_blank" class="project-link">View on GitHub →</a>
+        </div>
+
+        <div class="project-card">
+            <p class="project-tag">Verilog HDL</p>
+            <h3 class="project-title">4 Bit ALU</h3>
+            <p class="project-desc">this project is a 4 bit Arithmetic Logic Unit (ALU) designed in Verilog HDL and deployed on a DE10-Lite FGPA using Intel Quartus Prime. which helped me gain an understanding of how computers perform calculations at the hardware level using logic gates and digital design. This was one of my most complex projects as not only am i writing in a language ive never used its done using a software that i have never used. But this project taught me resilence and a severe understanding of computer hardware, i look forward to writing more often with Verilog!</p>
+            <a href="https://github.com/17MikeAsh/ALU-4-DESIGN-PROJECT.git" target="_blank" class="project-link">View on GitHub →</a>
+        </div>
+
+        <div class="project-card">
+            <p class="project-tag">Verilog</p>
+            <h3 class="project-title">Advanced Combination Lock</h3>
+            <p class="project-desc">This is an interactive and advanced combination lock system that I built using a microcontroller simulator called Wokwi. It allows the user to input a custom PIN, with a security feature that locks them out after three incorrect attempts. To bring the system to life, I used a servo motor to represent the lock opening, along with LEDs, green indicating access granted and red showing an incorrect PIN. A buzzer was also added for feedback, and an LED display shows what the user is typing in real time as well as whether access has been granted.
+This was one of my most entertaining projects, I genuinely enjoyed every second of it. I did face a few roadblocks, especially with pin connections, but it taught me patience and the importance of properly debugging both my code and wiring instead of rushing through the process.
+wait for my next project with a microcontroller!</p>
+            <a href="https://wokwi.com/projects/448685374047130625" target="_blank" class="project-link">View on wokwi →</a>
+        </div>
+
+    </div>
+</section>
+
+<section id="hobbies" class="mt-20 px-6" style="max-width:600px;margin-left:auto;margin-right:auto;">
+    <h2 class="text-3xl font-semibold text-center">Hobbies</h2>
+    <p style="text-align:center;margin-top:1rem;margin-bottom:0.5rem;font-size:0.95rem;font-weight:600;letter-spacing:0.05em;">I LOVE BEING OCCUPIED</p>
+    <p style="text-align:center;color:#aaa;font-size:0.85rem;line-height:1.7;max-width:480px;margin:0.5rem auto 0;">Whether it's learning a new skill, or building something, I'm always picking up new hobbies or spending time with friends i always make sure im never idle and on my toes as that's the best way to grow and become the best version of myself! </p>
+    <div class="timeline" style="margin-top:2rem;">
+
+        <div class="timeline-item">
+    <div class="timeline-icon">🎵</div>
+    <div class="timeline-right">
+        <p class="timeline-date">April 2019 - Current</p>
+        <p class="timeline-title">Music</p>
+        <p class="timeline-desc">I love creating music — from writing to creating beats, it truly is a passion of mine. It's a form of therapy, that's for sure!</p>
+    </div>
+</div>
+
+<div class="timeline-item">
+    <div class="timeline-icon">🎮</div>
+    <div class="timeline-right">
+        <p class="timeline-date">February 2020 - Current</p>
+        <p class="timeline-title">Big Time Gamer</p>
+        <p class="timeline-desc">I've been gaming since lockdown — from Fortnite to FIFA to COD, I'm always down for a gaming session. My personal therapy 😅</p>
+    </div>
+</div>
+
+<div class="timeline-item">
+    <div class="timeline-icon">💪🏽</div>
+    <div class="timeline-right">
+        <p class="timeline-date">April 2022 - Current</p>
+        <p class="timeline-title">Gym</p>
+        <p class="timeline-desc">I've been training for a few years now and it's fair to say it's a real test of discipline — but the results speak for themselves.</p>
+    </div>
+</div>
+
+<div class="timeline-item">
+    <div class="timeline-icon">🖥️</div>
+    <div class="timeline-right">
+        <p class="timeline-date">January 2025</p>
+        <p class="timeline-title">Built My Own PC</p>
+        <p class="timeline-desc">Through my passion for gaming and being an Electrical Engineer — why not put my skills and love for the game to use! Here's what's under the hood:</p>
+        <ul style="margin-top:8px;color:#aaa;font-size:0.78rem;line-height:1.9;list-style:none;padding:0;">
+            <li>⚙️ <span style="color:white;font-weight:500;">CPU</span> — AMD Ryzen 5 7600</li>
+            <li>🔌 <span style="color:white;font-weight:500;">Motherboard</span> — Gigabyte B650M D3H AX</li>
+            <li>🎮 <span style="color:white;font-weight:500;">GPU</span> — AMD Radeon RX 7600</li>
+            <li>🧠 <span style="color:white;font-weight:500;">RAM</span> — Corsair Vengeance DDR5</li>
+            <li>💾 <span style="color:white;font-weight:500;">Storage</span> — Crucial P3 Plus NVMe SSD</li>
+            <li>⚡ <span style="color:white;font-weight:500;">PSU</span> — Be Quiet! System Power 10 650W</li>
+            <li>🖱️ <span style="color:white;font-weight:500;">Case</span> — Fractal Design Focus 2</li>
+        </ul>
+    </div>
+</div>
+
+<div class="timeline-item">
+    <div class="timeline-icon">🚘</div>
+    <div class="timeline-right">
+        <p class="timeline-date">August 2024 - Current</p>
+        <p class="timeline-title">Got My Licence</p>
+        <p class="timeline-desc">Got my licence in August 2024 — one of my biggest achievements and exactly what fuelled my love for cars. I love a good drive with good music. I currently drive a Mercedes A250e but in due time I hope to get my first performance car... an A35 or maybe an S3? Still split on that one 🤔</p>
+    </div>
+</div>
+
+<div class="timeline-item">
+    <div class="timeline-icon">🎾</div>
+    <div class="timeline-right">
+        <p class="timeline-date">August 2025 - Current</p>
+        <p class="timeline-title">Padel</p>
+        <p class="timeline-desc">I've been playing padel for sometime now — I'm not the best but it's a sport I'm trying to learn.</p>
+    </div>
+</div>
+</section>
+<section id="contact" class="mt-20 mb-32 text-center px-6">
+    <h2 class="text-3xl font-semibold">Contact Me</h2>
+    <p style="color:#aaa;font-size:0.85rem;margin:1rem 0 2rem;">
+    Let's have a chat, i don't bite and... im way cooler than i look😅
+    </p>
+ <div style="display:flex;justify-content:center;">
+    <a href="https://www.linkedin.com/in/michaelashade77" target="_blank" class="icon-bubble">
+        <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="60" height="60">
+    </a>
+</div>
+</section>
+
+<script>
+const text = "Hi, I'm Michael 👋🏾";
+const typedText = document.getElementById("typed-text");
+
+let index = 0;
+
+function type() {
+    if (index < text.length) {
+        typedText.textContent += text.charAt(index);
+        index++;
+        setTimeout(type, 100);
+    }
+}
+
+type();
+</script>
+<div class="dock">
+    <a class="dock-btn" data-label="Home" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+    </a>
+
+    <div class="dock-divider"></div>
+
+    <a href="https://github.com/17MikeAsh" target="_blank" class="dock-btn" data-label="GitHub">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
+    </a>
+
+    <a href="https://www.linkedin.com/in/michaelashade77" target="_blank" class="dock-btn" data-label="LinkedIn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+
+    <a href="mailto:michaelashade02@gmail.com" class="dock-btn" data-label="Email">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+    </a>
+
+    <div class="dock-divider"></div>
+
+<a href="interncv.pdf" target="_blank" class="dock-btn" data-label="My CV">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+</a>
+<div class="dock-divider"></div>
+
+<a class="dock-btn" data-label="Theme" onclick="toggleTheme()">
+    <svg id="theme-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+</a>
+
+</div>
+<script>
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const icon = document.getElementById('theme-icon');
+    if (document.body.classList.contains('light-mode')) {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    } else {
+        icon.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>';
+    }
+}
+</script>
+
+<script>
+const facts = [
+    "Ive been studying Engineering for the past 8 years, i love it 👨🏽‍💻",
+    "Started coding in summer 2025 best decision ever 🚀",
+    "Im a hardcore Man united fan, up the reds 🔴",
+    "Once i start something, im commited to finishing it! ⛏️",
+    "I Love everything cars... my favorite brand AUDI 🏎️",
+    "Hey, I KNOW im the best fit for your company 👋🏾",
+    " It's my dream to be an engineer! 🔧"
+];
+
+let factIndex = 0;
+const factEl = document.getElementById('funfact');
+
+function rotateFact() {
+    factEl.style.opacity = 0;
+    setTimeout(() => {
+        factEl.textContent = facts[factIndex];
+        factEl.style.opacity = 1;
+        factIndex = (factIndex + 1) % facts.length;
+    }, 500);
+}
+
+rotateFact();
+setInterval(rotateFact, 4000);
+</script>
+</body>
+</html>
